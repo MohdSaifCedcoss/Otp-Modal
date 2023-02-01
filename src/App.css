@@ -1,0 +1,19 @@
+.App {
+  text-align: center;
+}
+.position {
+  margin: 15% auto auto auto;
+}
+.head {
+  text-align: left;
+}
+.input_container {
+  text-align: left;
+}
+.input {
+  width: 7%;
+  margin: 2%;
+}
+.timer {
+  color: red;
+}
