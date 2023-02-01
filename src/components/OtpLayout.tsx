@@ -19,7 +19,7 @@ const OtpLayout = () => {
   const [numberThree, setNumberThree] = useState<string>("");
   const [numberFour, setNumberFour] = useState<string>("");
   const [numberFive, setNumberFive] = useState<string>("");
-  const [attempts, setAttempts] = useState<number>(5);
+  const [attempts, setAttempts] = useState<number>(4);
 
   // These states are for showing and hiding the status
   const [disable, setDisable] = useState<boolean>(true);
