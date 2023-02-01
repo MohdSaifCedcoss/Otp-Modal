@@ -92,6 +92,7 @@ const OtpLayout = () => {
       } else {
         setShow("block");
         setShowSuccess("none");
+        inputFiveRef.current.blur();
         inputOneRef.current.style.border = "2px solid red";
         inputTwoRef.current.style.border = "2px solid red";
         inputThreeRef.current.style.border = "2px solid red";
