@@ -40,12 +40,12 @@ const OtpLayout = () => {
       inputOneRef.current.focus();
     });
     // This will start the timer
-    setTimeout(() => {
+    let time=setTimeout(() => {
       setCountDown((prev) => prev - 1);
     }, 1000);
     if (countDown === 0) {
-      setCountDown(60);
       setShowSuccess("none");
+      clearTimeout(time)
       setDisable(false);
     }
   }, [countDown]);
@@ -107,6 +107,7 @@ const OtpLayout = () => {
   // This method will set the OTP when clicked on resend OTP
   const generateNumber = () => {
     setDisable(true);
+    setCountDown(60);
     setShowSuccess("block");
     setAttempts((prev) => prev - 1);
     const num = Math.ceil(Math.random() * (99999 - 10000) + 10000);
