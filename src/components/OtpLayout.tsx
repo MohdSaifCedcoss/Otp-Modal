@@ -19,35 +19,34 @@ const OtpLayout = () => {
   const [numberFive, setNumberFive] = useState<string>("");
   const [attempts, setAttempts] = useState<number>(5);
 
+  const [disable, setDisable] = useState<boolean>(true);
+  const [show, setShow] = useState<string>("none");
+  const [showSuccess, setShowSuccess] = useState<string>("none");
+
   const [countDown, setCountDown] = useState<number>(60);
 
   const [numberArray, setNumberArray] = useState<number[]>([]);
-  let interval: any;
-
   useEffect(() => {
     const arrayDigits = Array.from(String(USE_NUMBER.number), Number);
     setNumberArray(arrayDigits);
-    // inputOneRef.current.focus();
-    // modalDiv.current.addEventListener("shown.bs.modal", function () {
-    //   inputOneRef.current.focus();
-    // });
+    modalDiv.current.addEventListener("shown.bs.modal", function () {
+      inputOneRef.current.focus();
+    });
+    setTimeout(() => {
+      setCountDown((prev) => prev - 1);
+    }, 1000);
     if (countDown === 0) {
-      setAttempts((prev) => prev - 1);
       setCountDown(60);
+      setShowSuccess("none");
+      setDisable(false);
     }
   }, [countDown]);
 
-  const timer = () => {
-    interval = setInterval(() => {
-      setCountDown((prev) => prev - 1);
-    }, 1000);
-  };
   const checkFirstCharacter = () => {
     if (
       Number(inputOneRef.current.value) >= 0 &&
       Number(inputOneRef.current.value) <= 9
     ) {
-      timer();
       setNumberOne(inputOneRef.current.value);
       inputTwoRef.current.focus();
     } else {
@@ -104,12 +103,18 @@ const OtpLayout = () => {
         Number(numberFour) === numberArray[3] &&
         Number(inputFiveRef.current.value) === numberArray[4]
       ) {
+        setShow("none");
         inputOneRef.current.style.border = "2px solid green";
         inputTwoRef.current.style.border = "2px solid green";
         inputThreeRef.current.style.border = "2px solid green";
         inputFourRef.current.style.border = "2px solid green";
         inputFiveRef.current.style.border = "2px solid green";
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
+        setShow("block");
+        setShowSuccess("none");
         inputOneRef.current.style.border = "2px solid red";
         inputTwoRef.current.style.border = "2px solid red";
         inputThreeRef.current.style.border = "2px solid red";
@@ -119,6 +124,14 @@ const OtpLayout = () => {
     } else {
       setNumberFive("");
     }
+  };
+
+  const generateNumber = () => {
+    setDisable(true);
+    setShowSuccess("block");
+    setAttempts((prev) => prev - 1);
+    const num = Math.ceil(Math.random() * (99999 - 10000) + 10000);
+    USE_NUMBER.setNumber(num);
   };
 
   return (
@@ -198,11 +211,25 @@ const OtpLayout = () => {
                   className="input"
                   maxLength={1}
                 />
-                <br />
-                <br />
+                <h6 className="resend_success" style={{ display: showSuccess }}>
+                  One-Time Password sent succesffully!
+                </h6>
+                <h6 className="resend_alert" style={{ display: show }}>
+                  Entered one time password is incorrect
+                </h6>
                 <div>
-                  <span>Resend One-Time Passcode ({attempts} left)</span>
-                  <span className="float-end timer">{countDown}</span>
+                  <span className="resend_class">
+                    {" "}
+                    <button
+                      className="resend"
+                      disabled={disable}
+                      onClick={() => generateNumber()}
+                    >
+                      Resend OTP
+                    </button>{" "}
+                    <p className="attempts_class"> ({attempts} left)</p>
+                    <span className="timer">{countDown} sec left</span>
+                  </span>
                 </div>
               </div>
             </div>

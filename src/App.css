@@ -16,4 +16,27 @@
 }
 .timer {
   color: red;
+  margin-left: 40%;
+}
+.resend_class {
+  display: flex;
+}
+.attempts_class {
+  margin-left: 2%;
+}
+.disable {
+  cursor: none;
+  color: lightgray;
+}
+.resend {
+  background: none;
+  border: none;
+  color: rgb(19, 126, 247);
+  margin: -3% 0 0 0;
+}
+.resend_alert {
+  color: red;
+}
+.resend_success {
+  color: green;
 }
