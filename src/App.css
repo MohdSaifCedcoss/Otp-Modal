@@ -1,42 +1,58 @@
 .App {
   text-align: center;
 }
+
+/* This is for positioning of modal button */
 .position {
   margin: 15% auto auto auto;
 }
+
+/* This is for heading for enter your code */
 .head {
   text-align: left;
 }
+
+/*For inputs   */
 .input_container {
   text-align: left;
 }
+
+/* Individual input */
 .input {
   width: 7%;
   margin: 2%;
 }
+
+/* Timer heading */
 .timer {
   color: red;
   margin-left: 40%;
 }
+
+/* resend heading */
 .resend_class {
   display: flex;
 }
+
+/* Remaing attemps heading */
 .attempts_class {
   margin-left: 2%;
 }
-.disable {
-  cursor: none;
-  color: lightgray;
-}
+
+/* Resend OTP button */
 .resend {
   background: none;
   border: none;
   color: rgb(19, 126, 247);
   margin: -3% 0 0 0;
 }
+
+/* Error message */
 .resend_alert {
   color: red;
 }
+
+/* Success message */
 .resend_success {
   color: green;
 }

@@ -2,16 +2,18 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { NUMBER } from "../App";
 
 const OtpLayout = () => {
+  // Getting context for using it as common state
   const USE_NUMBER = useContext(NUMBER);
 
+  // Declarations of all the refs which will be needed
   const inputOneRef = useRef<HTMLInputElement>(null!);
   const inputTwoRef = useRef<HTMLInputElement>(null!);
   const inputThreeRef = useRef<HTMLInputElement>(null!);
   const inputFourRef = useRef<HTMLInputElement>(null!);
   const inputFiveRef = useRef<HTMLInputElement>(null!);
-
   const modalDiv = useRef<HTMLDivElement>(null!);
 
+  // Here state for storing the entered number
   const [numberOne, setNumberOne] = useState<string>("");
   const [numberTwo, setNumberTwo] = useState<string>("");
   const [numberThree, setNumberThree] = useState<string>("");
@@ -19,19 +21,25 @@ const OtpLayout = () => {
   const [numberFive, setNumberFive] = useState<string>("");
   const [attempts, setAttempts] = useState<number>(5);
 
+  // These states are for showing and hiding the status
   const [disable, setDisable] = useState<boolean>(true);
   const [show, setShow] = useState<string>("none");
   const [showSuccess, setShowSuccess] = useState<string>("none");
 
+  // This state is for countdown timer
   const [countDown, setCountDown] = useState<number>(60);
 
+  // This state is for storing the generated OTP in array format
   const [numberArray, setNumberArray] = useState<number[]>([]);
+
   useEffect(() => {
+    // Converting OTP to array so that each digit can be matched seperately
     const arrayDigits = Array.from(String(USE_NUMBER.number), Number);
     setNumberArray(arrayDigits);
     modalDiv.current.addEventListener("shown.bs.modal", function () {
       inputOneRef.current.focus();
     });
+    // This will start the timer
     setTimeout(() => {
       setCountDown((prev) => prev - 1);
     }, 1000);
@@ -42,58 +50,26 @@ const OtpLayout = () => {
     }
   }, [countDown]);
 
-  const checkFirstCharacter = () => {
+  // This will check for input data is only number from 0-9 and no space and will shift the focus to next input
+  const checkCharacter = (ref: any, nextRef: any, method: any) => {
     if (
-      Number(inputOneRef.current.value) >= 0 &&
-      Number(inputOneRef.current.value) <= 9
+      Number(ref.current.value) >= 0 &&
+      Number(ref.current.value) <= 9 &&
+      ref.current.value !== " "
     ) {
-      setNumberOne(inputOneRef.current.value);
-      inputTwoRef.current.focus();
+      method(ref.current.value);
+      nextRef.current.focus();
     } else {
-      setNumberOne("");
+      method("");
     }
   };
 
-  const checkSecondCharacter = () => {
-    if (
-      Number(inputTwoRef.current.value) >= 0 &&
-      Number(inputTwoRef.current.value) <= 9
-    ) {
-      setNumberTwo(inputTwoRef.current.value);
-      inputThreeRef.current.focus();
-    } else {
-      setNumberTwo("");
-    }
-  };
-
-  const checkThirdCharacter = () => {
-    if (
-      Number(inputThreeRef.current.value) >= 0 &&
-      Number(inputThreeRef.current.value) <= 9
-    ) {
-      setNumberThree(inputThreeRef.current.value);
-      inputFourRef.current.focus();
-    } else {
-      setNumberThree("");
-    }
-  };
-
-  const checkFourCharacter = () => {
-    if (
-      Number(inputFourRef.current.value) >= 0 &&
-      Number(inputFourRef.current.value) <= 9
-    ) {
-      setNumberFour(inputFourRef.current.value);
-      inputFiveRef.current.focus();
-    } else {
-      setNumberFour("");
-    }
-  };
-
+  // This method will check for the last digit and match if the input data/mumbers matches with OTP or not
   const checkFiveCharacter = () => {
     if (
       Number(inputFiveRef.current.value) >= 0 &&
-      Number(inputFiveRef.current.value) <= 9
+      Number(inputFiveRef.current.value) <= 9 &&
+      inputFiveRef.current.value !== " "
     ) {
       setNumberFive(inputFiveRef.current.value);
       if (
@@ -104,6 +80,7 @@ const OtpLayout = () => {
         Number(inputFiveRef.current.value) === numberArray[4]
       ) {
         setShow("none");
+        inputFiveRef.current.blur();
         inputOneRef.current.style.border = "2px solid green";
         inputTwoRef.current.style.border = "2px solid green";
         inputThreeRef.current.style.border = "2px solid green";
@@ -126,6 +103,7 @@ const OtpLayout = () => {
     }
   };
 
+  // This method will set the OTP when clicked on resend OTP
   const generateNumber = () => {
     setDisable(true);
     setShowSuccess("block");
@@ -175,14 +153,18 @@ const OtpLayout = () => {
                   type="text"
                   value={numberOne}
                   className="input"
-                  onChange={() => checkFirstCharacter()}
+                  onChange={() =>
+                    checkCharacter(inputOneRef, inputTwoRef, setNumberOne)
+                  }
                   maxLength={1}
                   autoFocus
                 />
                 <input
                   type="text"
                   value={numberTwo}
-                  onChange={() => checkSecondCharacter()}
+                  onChange={() =>
+                    checkCharacter(inputTwoRef, inputThreeRef, setNumberTwo)
+                  }
                   ref={inputTwoRef}
                   className="input"
                   maxLength={1}
@@ -190,7 +172,9 @@ const OtpLayout = () => {
                 <input
                   type="text"
                   value={numberThree}
-                  onChange={() => checkThirdCharacter()}
+                  onChange={() =>
+                    checkCharacter(inputThreeRef, inputFourRef, setNumberThree)
+                  }
                   ref={inputThreeRef}
                   className="input"
                   maxLength={1}
@@ -198,7 +182,9 @@ const OtpLayout = () => {
                 <input
                   type="text"
                   value={numberFour}
-                  onChange={() => checkFourCharacter()}
+                  onChange={() =>
+                    checkCharacter(inputFourRef, inputFiveRef, setNumberFour)
+                  }
                   ref={inputFourRef}
                   className="input"
                   maxLength={1}
