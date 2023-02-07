@@ -4,6 +4,7 @@ import NewLayout from "./NewLayout";
 const Register = () => {
   const [digits, setdigits] = useState<Number>();
   const inputRef = useRef<HTMLInputElement>(null!);
+  // This method will generate the otp acccording to the number of digits
   const generateNumber = () => {
     let max = 0;
     let min = 0;
@@ -29,16 +30,16 @@ const Register = () => {
     return num;
   };
 
+  // for setting the digits
   const getDigits = (e: React.ChangeEvent<HTMLInputElement>) => {
     setdigits(Number(e.target.value));
   };
 
+  // For validating the data entered by the user
   const checkDigits = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (String(digits) === "" || isNaN(Number(digits))) {
-      alert(
-        "Digits field cant neither be left empty and must have digits only !"
-      );
+      alert("Digits field cant be left empty and should have digits only !");
       inputRef.current.focus();
       return;
     } else if (Number(digits) < 4 || Number(digits) > 7) {

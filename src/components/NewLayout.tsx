@@ -13,14 +13,16 @@ const NewLayout = (props: propTypes) => {
 
   // States which will be used in application
   const [refs, setRefs] = useState<any>([]);
-  const [showError, setShowError] = useState<string>("none");
-  const [showSuccess, setShowSuccess] = useState<string>("none");
-  const [showVerifified, setShowVerified] = useState<string>("none");
-  const [showLoader, setShowLoader] = useState<string>("none");
-  const [borderColor, setBorderColor] = useState<string>("black");
-  const [disableButton, setDisableButton] = useState<boolean>(true);
   const [attempts, setAttempts] = useState<number>(4);
   const [countdown, setCountdown] = useState<number>(59);
+  const [states, setStates] = useState({
+    showErrorMsg: "none",
+    showSuccessMsg: "none",
+    showVerififiedMsg: "none",
+    showloader: "none",
+    bordercolor: "black",
+    disabledButton: true,
+  });
 
   // This will convert the generated OTP to array
   const arrayDigits = Array.from(String(USE_NUMBER.number), Number);
@@ -46,10 +48,13 @@ const NewLayout = (props: propTypes) => {
     let time = setTimeout(() => {
       setCountdown((prev) => prev - 1);
     }, 1000);
-    if (countdown === 50) {
+    if (countdown === 0) {
       clearTimeout(time);
-      setShowSuccess("none");
-      setDisableButton(false);
+      setStates((prev) => ({
+        ...prev,
+        disabledButton: false,
+        showSuccessMsg: "none",
+      }));
     }
   }, [countdown]);
 
@@ -68,16 +73,23 @@ const NewLayout = (props: propTypes) => {
     }
     if (checkOTP()) {
       refs[index].current.blur();
-      setBorderColor("green");
-      setShowLoader("inline");
-      setShowVerified("inline");
+      setStates((prev) => ({
+        ...prev,
+        showSuccessMsg: "none",
+        showVerififiedMsg: "inline",
+        showloader: "inline",
+        bordercolor: "green",
+      }));
       setTimeout(() => {
         window.location.reload();
       }, 1000);
     } else if (checkOTP() === false) {
-      setBorderColor("red");
-      setShowSuccess("none");
-      setShowError("inline");
+      setStates((prev) => ({
+        ...prev,
+        showErrorMsg: "inline",
+        showSuccessMsg: "none",
+        bordercolor: "red",
+      }));
     }
   };
 
@@ -93,20 +105,18 @@ const NewLayout = (props: propTypes) => {
 
   // This function will match the OTP
   const checkOTP = () => {
-    // if (showError === "inline") {
-    //   setShowError("none");
-    // }
     let check = false;
     for (let i = 0; i < refs.length; i++) {
       if (String(refs[i].current.value) === "") {
-        // if (i === Number(refs.length - 1)) {
         check = true;
-        // }
       }
     }
     if (check === true) {
-      setShowError("none");
-      setBorderColor("black");
+      setStates((prev) => ({
+        ...prev,
+        showErrorMsg: "none",
+        bordercolor: "black",
+      }));
       return;
     }
     for (let i = 0; i < refs.length; i++) {
@@ -134,12 +144,16 @@ const NewLayout = (props: propTypes) => {
       refs[i].current.value = "";
     }
     refs[0].current.focus();
-    setBorderColor("black");
-    setShowSuccess("inline");
-    setDisableButton(true);
-    setShowError("none");
+    setStates((prev) => ({
+      ...prev,
+      disabledButton: true,
+      showSuccessMsg: "inline",
+      bordercolor: "black",
+      showErrorMsg: "none",
+    }));
     setCountdown(59);
     setAttempts((prev) => prev - 1);
+    // calling method from parent class
     USE_NUMBER.setNumber(props.generateNumber());
   };
 
@@ -172,7 +186,7 @@ const NewLayout = (props: propTypes) => {
                   <input
                     type="text"
                     className={`input`}
-                    style={{ border: `2px solid ${borderColor}` }}
+                    style={{ border: `2px solid ${states.bordercolor}` }}
                     ref={item}
                     onKeyDown={(event: any) =>
                       checkBackspace(event, item, index)
@@ -185,23 +199,26 @@ const NewLayout = (props: propTypes) => {
               <div
                 className="spinner-border loader"
                 role="status"
-                style={{ display: showLoader }}
+                style={{ display: states.showloader }}
               >
                 <span className="visually-hidden">Loading...</span>
               </div>
               <br />
-              <strong className="resend_alert" style={{ display: showError }}>
+              <strong
+                className="resend_alert"
+                style={{ display: states.showErrorMsg }}
+              >
                 Entered One-Time Password is incorrect!
               </strong>
               <strong
                 className="resend_success"
-                style={{ display: showVerifified }}
+                style={{ display: states.showVerififiedMsg }}
               >
                 OTP Verified !
               </strong>
               <strong
                 className="resend_success"
-                style={{ display: showSuccess }}
+                style={{ display: states.showSuccessMsg }}
               >
                 OTP has been sent Succesfully !
               </strong>
@@ -211,11 +228,11 @@ const NewLayout = (props: propTypes) => {
                   className="resend"
                   style={{
                     color:
-                      disableButton === true
+                      states.disabledButton === true
                         ? `lightgray`
                         : `rgb(19, 126, 247)`,
                   }}
-                  disabled={disableButton}
+                  disabled={states.disabledButton}
                   onClick={() => resendOTP()}
                 >
                   Resend OTP
