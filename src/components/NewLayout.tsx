@@ -24,7 +24,7 @@ const NewLayout = (props: propTypes) => {
     disabledButton: true,
   });
 
-  // This will convert the generated OTP to array
+  // This will convert the generated OTP to array for matching
   const arrayDigits = Array.from(String(USE_NUMBER.number), Number);
 
   // This useEffect will make the dynamic input boxes on the basis of digits
