@@ -1,21 +1,88 @@
-import React, { useContext, useEffect } from "react";
-import { NUMBER } from "../App";
-import OtpLayout from "./OtpLayout";
+import React, { useRef, useState } from "react";
+import NewLayout from "./NewLayout";
 
 const Register = () => {
-  // Here using useContext to get the common state
-  const USE_NUMBER = useContext(NUMBER);
+  const [digits, setdigits] = useState<Number>();
+  const inputRef = useRef<HTMLInputElement>(null!);
+  const generateNumber = () => {
+    let max = 0;
+    let min = 0;
+    switch (digits) {
+      case 4:
+        max = 9999;
+        min = 1000;
+        break;
+      case 5:
+        max = 99999;
+        min = 10000;
+        break;
+      case 6:
+        max = 999999;
+        min = 100000;
+        break;
+      case 7:
+        max = 9999999;
+        min = 1000000;
+        break;
+    }
+    const num = Math.ceil(Math.random() * (max - min) + min);
+    return num;
+  };
 
-  //This will generate a five digit random number and will set it to the context
-  useEffect(() => {
-    const num = Math.ceil(Math.random() * (99999 - 10000) + 10000);
-    USE_NUMBER.setNumber(num);
-  }, []);
+  const getDigits = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setdigits(Number(e.target.value));
+  };
+
+  const checkDigits = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    if (String(digits) === "" || isNaN(Number(digits))) {
+      alert(
+        "Digits field cant neither be left empty and must have digits only !"
+      );
+      inputRef.current.focus();
+      return;
+    } else if (Number(digits) < 4 || Number(digits) > 7) {
+      alert("Number can be in range from 4 to 7");
+      inputRef.current.focus();
+      return;
+    }
+  };
 
   return (
-    <div>
+    <div className="card shadow main_container">
       {/* Calling component which will show modal */}
-      <OtpLayout />
+      <form
+        onSubmit={(e: React.SyntheticEvent) => checkDigits(e)}
+        style={{ textAlign: "center" }}
+      >
+        <div className="input-group mb-3 digit_input">
+          <input
+            type="text"
+            className="form-control"
+            maxLength={1}
+            ref={inputRef}
+            autoFocus
+            placeholder="Enter digits for OTP"
+            aria-label="Enter digits for OTP"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => getDigits(e)}
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+        >
+          Validate OTP
+        </button>
+      </form>
+      {Number(digits) >= 4 && Number(digits) <= 7 ? (
+        <NewLayout
+          digit={digits as Number}
+          generateNumber={generateNumber as any}
+        />
+      ) : null}
     </div>
   );
 };
