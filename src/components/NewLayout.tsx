@@ -99,7 +99,15 @@ const NewLayout = (props: propTypes) => {
     if (key === "Backspace" || key === "Delete") {
       if (currentRef.current.value === "") {
         if (index !== 0) refs[index - 1].current.focus();
+      } else if (event.target.selectionStart === 0) {
+        if (index !== 0) refs[index - 1].current.focus();
       }
+    }
+    if (key === "ArrowRight" && event.target.selectionStart === 1) {
+      if (index !== refs.length - 1) refs[index + 1].current.focus();
+    }
+    if (key === "ArrowLeft" && event.target.selectionStart === 0) {
+      if (index !== 0) refs[index - 1].current.focus();
     }
   };
 
