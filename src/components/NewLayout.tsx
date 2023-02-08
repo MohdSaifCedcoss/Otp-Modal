@@ -72,7 +72,8 @@ const NewLayout = (props: propTypes) => {
       currRef.current.value = "";
     }
     if (checkOTP()) {
-      refs[index].current.blur();
+      currRef.current.blur();
+      if (index !== refs.length - 1) refs[index + 1].current.blur();
       setStates((prev) => ({
         ...prev,
         showSuccessMsg: "none",
